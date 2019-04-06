@@ -27,22 +27,50 @@ class ConvertToPDF
   private
 
   def save
-    pdf.to_file(@to)
+    File.write(@to + '.html', pdf)
+    #pdf.to_file(@to)
   end
 
   def pdf
-    html ||= ''
+    style = Rouge::Themes::Base16.mode(:light).render(scope: '')
+    n = "        
 
-    style = 'size: 12px; font-family: Helvetica, sans-serif;'
+    .rouge-table {
+      margin-bottom: 2.5rem;
+    }"
+    html ||= "<html><head>
+      <style type=\"text/css\">
+      #{style}
+
+      .filename {
+        font-size: 2.5rem;
+        font-family: Helvetica Neue, sans-serif;
+      }
+
+      table {
+        margin-bottom: 3rem;
+      }
+
+      table pre {
+        font-size: 2rem;
+      }
+
+      </style>
+    </head><body>"
+
+    #style = 'font-size: 16px; font-family: Helvetica, sans-serif;'
 
     read_files.each do |file|
-      html += "<strong style='#{style}'>File: #{file.first}</strong></br></br>"
+      html += "<strong class=\"filename\">File: #{file.first}</strong></br></br>"
       html += prepare_line_breaks(syntax_highlight(file)).to_s
-      html += add_space(30)
+      #html += add_space(30)
     end
 
-    @kit = PDFKit.new(html, page_size: 'A4')
-    @kit
+    html += '</body></html>'
+
+    html
+    #@kit = PDFKit.new(html, page_size: 'A4')
+    #@kit
   end
 
   def syntax_highlight(file)
@@ -50,8 +78,9 @@ class ConvertToPDF
     file_lexer = Rouge::Lexer.find(file_type)
     return CGI.escapeHTML(file.last) unless file_lexer
 
-    theme = Rouge::Themes::Base16.mode(:light)
-    formatter = Rouge::Formatters::HTMLInline.new(theme)
+    formatter = Rouge::Formatters::HTML.new
+    #formatter = Rouge::Formatters::HTMLInline.new(theme)
+    #formatter = Rouge::Formatters::HTMLPygments.new(formatter, class: 'line-%i')
     formatter = Rouge::Formatters::HTMLTable.new(formatter, start_line: 1)
     code_data = file.last.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
     formatter.format(file_lexer.lex(code_data))
