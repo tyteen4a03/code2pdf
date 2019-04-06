@@ -55,16 +55,16 @@ class ConvertToPDF
         #{style}
 
         .filename {
-          font-size: 2.5rem;
+          font-size: 1.5rem;
           font-family: Helvetica Neue, sans-serif;
         }
   
         table {
-          margin-bottom: 3rem;
+          margin-bottom: 2rem;
         }
   
         table pre {
-          font-size: 2rem;
+          font-size: 1rem;
         }
       }
       </style>
