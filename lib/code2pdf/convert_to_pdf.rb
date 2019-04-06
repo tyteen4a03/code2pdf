@@ -40,21 +40,33 @@ class ConvertToPDF
     }"
     html ||= "<html><head>
       <style type=\"text/css\">
-      #{style}
-
-      .filename {
-        font-size: 2.5rem;
-        font-family: Helvetica Neue, sans-serif;
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      @media print {
+        html, body {
+          width: 210mm;
+          height: 297mm;
+        }
       }
 
-      table {
-        margin-bottom: 3rem;
-      }
+      @media print, screen {
+        #{style}
 
-      table pre {
-        font-size: 2rem;
+        .filename {
+          font-size: 2.5rem;
+          font-family: Helvetica Neue, sans-serif;
+        }
+  
+        table {
+          margin-bottom: 3rem;
+        }
+  
+        table pre {
+          font-size: 2rem;
+        }
       }
-
       </style>
     </head><body>"
 
